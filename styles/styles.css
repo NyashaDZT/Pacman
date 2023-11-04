@@ -1,0 +1,14 @@
+/* All Images taken from pixelholic. Name: Pacman Game Art */
+
+body {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  color: #ffeb3b;
+  text-align: center;
+}
