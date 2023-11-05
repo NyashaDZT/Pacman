@@ -1,20 +1,96 @@
 // ! Elements
 // startButton or maybe key-press to start the game.
+const startButton = document.getElementById('start-button')
 // livesRemaining targetetted with a span<♥ ♥ ♥>-  to show how many lives are remaining for the player.
+const livesRemaining = document.getElementById('lives')
 // scoreDisplay targetetted with a span - to show many points the player has accrued at any point during the game.
-// barriers = for impenetrable grids, these will be lines at the perimeter of the game, however this characteristic can also be used to determine the maze.
+const scoreDisplay = document.getElementById('current-score')
 // ? variable for speed (ghost & pacman) or universal speed?
  // gameOn? = boolean true or false to show whether the game is still playing or not. 
+
+
 
 /* An element to set up the grid - this is mostly likely going to be done with the use of a for element.
   Grid will then compromise of different cell blocks denoting where pacman can and can't go, ie:
   div.cell element to select each individual cell.
   .skittles(food) for pacman */
 
-  const grid = document.querySelector('game')
-  console.log(grid)
+  const grid = document.getElementById('game')
+  const width = 20
+  const cellCount = width * width  // represents the numeber of cells in the grid
+  const cells = []
+  const startPos = 296
+  let currentPos = startPos
+  // barriers = for impenetrable grids, these will be lines at the perimeter of the game, however this characteristic can also be used to determine the maze.
+  barrierArray = [
+  0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 180,
+  200, 210, 220, 230, 240, 245, 250, 260, 265, 270, 280, 285, 290, 300, 305, 320, 330, 340, 350, 360, 380,
+  390, 9, 19, 29, 39, 49, 59, 69, 79, 89, 99, 119, 139, 159, 199,
+  209, 219, 229, 239, 249, 259, 269, 279, 289, 299, 319, 329, 339, 349, 359, 379, 389, 399,
+  29, 30, 31, 49, 50, 51, 69, 70, 71, 89, 90, 91, 342, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 327, 328, 329, 330, 331, 332, 333, 327, 247, 267, 287, 307, 313, 293, 273, 253, 2,
+  381, 382, 383, 385, 386, 387, 388, 389, 391, 392, 393, 394, 395, 396, 397, 398, 399, 291, 271, 251, 231, 211, 212, 213, 193, 208, 207,
+  242, 243, 244, 282, 283, 302, 303, 245, 265, 285, 305, 255, 256, 257, 295, 297, 315, 317,
+  215, 216, 217, 218, 195, 196, 197, 198, 201, 202, 203, 204, 205, 181, 182, 183, 184, 185, 187,
+  42, 43, 44, 45, 46, 47, 62, 63, 65, 66, 67, 102, 104, 106, 
+  53, 54, 56, 57, 73, 74, 75, 76, 77, 113, 115, 117, 
+  141, 142, 143, 144, 145, 153, 154, 155, 156, 157, 158, 128, 148, 130, 150, 384, 344, 64,
+];
+
+  // cell arrays
+
+
 
 // ! Variables
+
+function gridCreate(){
+  for (let i = 0; i < cellCount; i++){
+    const cell = document.createElement('div')
+    cell.classList.add('skittle')
+    cell.innerText = i
+    cell.id = i
+    // setting width and height:
+    cell.style.width = `${100 / width}%`
+    cell.style.height = `${100 / width}%`
+    grid.append(cell)
+    cells.push(cell)
+  }
+  barrierArray.forEach((index) => {
+    cells[index].classList.remove('skittle')
+    cells[index].classList.add('barrier');
+  });
+  
+  addpacMan()
+}
+
+function addpacMan(position) {
+  cells[startPos].classList.add('pacman')
+}
+
+function removePacman(){
+  cells[currentPos].classList.remove('pacman')
+}
+
+//  Movement - 
+
+function playerMove(event) {
+  const key = event.code
+  removePacman()
+
+  if (key === 'ArrowUp') {
+    currentPos -= width
+  } else if(key === 'ArrowDown'){
+    currentPos += width
+  } else if (key === 'ArrowLeft'){
+    currentPos -= 1
+  } else if (key === 'ArrowRight'){
+    currentPos += 1
+  }
+  console.log(currentPos)
+  addpacMan(currentPos)
+}
+
+console.log(gridCreate())
 
 // * startGame 
 // start game function - should be started by an event.
@@ -50,3 +126,5 @@
 // ! Events
 // event listener for keydown - movements
 // event listener for click  - start the game, play music, pause and potentially restart.
+
+document.addEventListener('keydown', playerMove)

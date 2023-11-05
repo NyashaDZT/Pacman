@@ -1,7 +1,7 @@
 /* All Images taken from pixelholic. Name: Pacman Game Art */
 
 body {
-  background-color: black;
+  background-color: green;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -12,3 +12,44 @@ h1 {
   color: #ffeb3b;
   text-align: center;
 }
+
+.grid-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 600px;
+  width: 600px;
+}
+
+#game {
+  display: flex;
+  flex-flow: row wrap;
+  background: white;
+  height: 600px;
+  width: 600px;
+}
+/* 
+#game > div {
+  border: 1px solid black;
+}
+*/
+
+.barrier {
+  background-color: #46270B;
+  
+}
+
+  .skittle {
+  background: url(../Images/other/dot.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.pacman {
+  background: url(../Images/pacman-down/1.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
