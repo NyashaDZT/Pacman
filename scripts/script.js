@@ -7,6 +7,11 @@ const livesRemaining = document.getElementById('lives')
 const scoreDisplay = document.getElementById('current-score')
 // ? variable for speed (ghost & pacman) or universal speed?
  // gameOn? = boolean true or false to show whether the game is still playing or not. 
+ let score = 0
+ let lives = 3
+ let skittles = 0
+ let atePowerFood = false
+
 
 
 
@@ -19,13 +24,15 @@ const scoreDisplay = document.getElementById('current-score')
   const width = 20
   const cellCount = width * width  // represents the numeber of cells in the grid
   const cells = []
+  // starting position
   const startPos = 296
   let currentPos = startPos
+
   // barriers = for impenetrable grids, these will be lines at the perimeter of the game, however this characteristic can also be used to determine the maze.
   barrierArray = [
   0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
   30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 180,
-  200, 210, 220, 230, 240, 245, 250, 260, 265, 270, 280, 285, 290, 300, 305, 320, 330, 340, 350, 360, 380,
+  200, 220, 240, 245, 260, 265, 280, 285, 290, 300, 305, 320, 330, 340, 350, 360, 380,
   390, 9, 19, 29, 39, 49, 59, 69, 79, 89, 99, 119, 139, 159, 199,
   209, 219, 229, 239, 249, 259, 269, 279, 289, 299, 319, 329, 339, 349, 359, 379, 389, 399,
   29, 30, 31, 49, 50, 51, 69, 70, 71, 89, 90, 91, 342, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 327, 328, 329, 330, 331, 332, 333, 327, 247, 267, 287, 307, 313, 293, 273, 253, 2,
@@ -36,6 +43,7 @@ const scoreDisplay = document.getElementById('current-score')
   53, 54, 56, 57, 73, 74, 75, 76, 77, 113, 115, 117, 
   141, 142, 143, 144, 145, 153, 154, 155, 156, 157, 158, 128, 148, 130, 150, 384, 344, 64,
 ];
+powerFood = [ 55, 310, 21, 264]
 
   // cell arrays
 
@@ -47,7 +55,7 @@ function gridCreate(){
   for (let i = 0; i < cellCount; i++){
     const cell = document.createElement('div')
     cell.classList.add('skittle')
-    cell.innerText = i
+    // cell.innerText = i 
     cell.id = i
     // setting width and height:
     cell.style.width = `${100 / width}%`
@@ -57,34 +65,60 @@ function gridCreate(){
   }
   barrierArray.forEach((index) => {
     cells[index].classList.remove('skittle')
-    cells[index].classList.add('barrier');
+    cells[index].classList.add('barrier')
   });
+
+  powerFood.forEach((index) => {
+    cells[index].classList.remove('skittle')
+    cells[index].classList.add('power-food')
+  })
   
-  addpacMan()
+  addpacMan(startPos)
 }
 
 function addpacMan(position) {
-  cells[startPos].classList.add('pacman')
+  cells[currentPos].classList.add('pacmandown')
 }
 
 function removePacman(){
-  cells[currentPos].classList.remove('pacman')
+  cells[currentPos].classList.remove('pacmandown')
 }
 
-//  Movement - 
+//  * playerMove
+// function for movement, this can be done as taught -=/+= width to move either left or right and the same logic but using a number for upwards or downwards movement.
+// above function will also have to take into account that pacman cannot go everywhere on the board, walls seem pretty simple, but inner barriers will need a novel solution.
+// above function should also be able to show the food being eaten as pacman moves from one cell to another, own function?
+// also take into account food eaten and increasing score.
 
 function playerMove(event) {
   const key = event.code
   removePacman()
 
-  if (key === 'ArrowUp') {
+  if (cells[currentPos].classList.contains('skittle')) {
+    cells[currentPos].classList.remove('skittle')
+    score++
+    scoreDisplay.innerText = score
+  }
+  if(cells[currentPos].classList.contains('power-food')) {
+    cells[currentPos].classList.remove('power-food')
+    atePowerFood = true
+    score += 100
+    scoreDisplay.innerText = score
+  }
+
+  if (key === 'ArrowUp' && !cells[currentPos - width].classList.contains('barrier') && currentPos % width !== 0) {
     currentPos -= width
-  } else if(key === 'ArrowDown'){
+    console.log(currentPos)
+  } else if(key === 'ArrowDown' && !cells[currentPos + width].classList.contains('barrier') && currentPos + width <= cellCount - 1 ){
     currentPos += width
-  } else if (key === 'ArrowLeft'){
-    currentPos -= 1
-  } else if (key === 'ArrowRight'){
+  } else if (key === 'ArrowLeft' && !cells[currentPos - 1].classList.contains('barrier') && !cells[currentPos].classList.contains('skittles') && currentPos  % width !== 0){
+    currentPos -= 1}
+    else if(key === 'ArrowLeft' && cells[currentPos - 1] === 159) {
+      currentPos = 179
+  } else if (key === 'ArrowRight' && !cells[currentPos + 1].classList.contains('barrier')){
     currentPos += 1
+  } else if (key === 'ArrowRight' && cells[currentPos + 1] === 180 && cells[currentPos + 1].classList.contains('barrier')){
+    currentPos = 160
   }
   console.log(currentPos)
   addpacMan(currentPos)
@@ -97,20 +131,17 @@ console.log(gridCreate())
 // should trigger game music to be played
 // pacman and ghosts should appear, pacman & ghosts should begin moving a small interval after startGame has been activated.
 
-//  * playerMove
-// function for movement, this can be done as taught -=/+= width to move either left or right and the same logic but using a number for upwards or downwards movement.
-// above function will also have to take into account that pacman cannot go everywhere on the board, walls seem pretty simple, but inner barriers will need a novel solution.
-// above function should also be able to show the food being eaten as pacman moves from one cell to another, own function?
-// also take into account food eaten and increasing score.
 
 // *CheckforCollision position
 // setInterval function that will check the position of pacman in relation to the ghost, if in the same cell player will lose a life and reset the games starting position.
 // In situations where pacman has eaten the special skittle, check collision should result in ghost being eaten.
 
+
+
 // * ghost movement. 
 // depending on complexity or details, movement could be done in loops, where each ghost follows set paths or maybe something more complex, more research needed.
 // reversed movement in the case pacman eats a special snack and can eat the ghosts - potentially reversal of movement so it appears they're moving away rather than towards?
-// the movement for each dinosaur will have to be different and each dino has slightly different characteristics that should be taken into account.
+// the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
 
 // ? ghostDissapear 
 // function to play to remove the ghost from the screen if pacman colides with it after eating the special skittle.

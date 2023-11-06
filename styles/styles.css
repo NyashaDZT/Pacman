@@ -27,8 +27,9 @@ h1 {
   display: flex;
   flex-flow: row wrap;
   background: white;
-  height: 600px;
-  width: 600px;
+  height: 500px;
+  width: 500px;
+  background: darkblue;
 }
 /* 
 #game > div {
@@ -38,7 +39,6 @@ h1 {
 
 .barrier {
   background-color: #46270B;
-  
 }
 
   .skittle {
@@ -47,9 +47,40 @@ h1 {
   background-repeat: no-repeat;
 }
 
-.pacman {
+.pacmandown {
   background: url(../Images/pacman-down/1.png);
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.pacmandowntwo {
+  background: url(../Images/pacman-down/2.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.pacmandownthree {
+  background: url(../Images/pacman-down/3.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.blinky {
+  background: url(../Images/ghosts/blinky.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.blue_ghost {
+  background: url(../Images/ghosts/blue_ghost.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.power-food {
+  background: url(../Images/other/strawberry.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: blink 1s infinite;
 }
 
