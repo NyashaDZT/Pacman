@@ -27,6 +27,7 @@ const scoreDisplay = document.getElementById('current-score')
   // starting position
   const startPos = 296
   let currentPos = startPos
+  let 
 
   // barriers = for impenetrable grids, these will be lines at the perimeter of the game, however this characteristic can also be used to determine the maze.
   barrierArray = [
@@ -45,6 +46,24 @@ const scoreDisplay = document.getElementById('current-score')
 ];
 powerFood = [ 55, 310, 21, 264]
 
+class Ghost{
+  constructor(className, ghostIndex, speed) {
+    this.className = className
+    this.ghostIndex = ghostIndex
+    this.speed = speed
+    this.startingPosition = ghostIndex
+    this.timer = 0
+  }
+}
+
+ghosts = [
+  new Ghost('blinky', 168, 250),
+  new Ghost('blue_ghost', 38, 350),
+  new Ghost('clyde', 152, 500),
+  new Ghost('inky', 361, 400)
+
+]
+
   // cell arrays
 
 
@@ -55,7 +74,7 @@ function gridCreate(){
   for (let i = 0; i < cellCount; i++){
     const cell = document.createElement('div')
     cell.classList.add('skittle')
-    // cell.innerText = i 
+    cell.innerText = i 
     cell.id = i
     // setting width and height:
     cell.style.width = `${100 / width}%`
@@ -72,9 +91,9 @@ function gridCreate(){
     cells[index].classList.remove('skittle')
     cells[index].classList.add('power-food')
   })
-  
   addpacMan(startPos)
 }
+
 
 function addpacMan(position) {
   cells[currentPos].classList.add('pacmandown')
@@ -108,7 +127,6 @@ function playerMove(event) {
 
   if (key === 'ArrowUp' && !cells[currentPos - width].classList.contains('barrier') && currentPos % width !== 0) {
     currentPos -= width
-    console.log(currentPos)
   } else if(key === 'ArrowDown' && !cells[currentPos + width].classList.contains('barrier') && currentPos + width <= cellCount - 1 ){
     currentPos += width
   } else if (key === 'ArrowLeft' && !cells[currentPos - 1].classList.contains('barrier') && !cells[currentPos].classList.contains('skittles') && currentPos  % width !== 0){
@@ -120,16 +138,58 @@ function playerMove(event) {
   } else if (key === 'ArrowRight' && cells[currentPos + 1] === 180 && cells[currentPos + 1].classList.contains('barrier')){
     currentPos = 160
   }
-  console.log(currentPos)
-  addpacMan(currentPos)
+  addpacMan()
+
 }
 
-console.log(gridCreate())
+
+gridCreate()
 
 // * startGame 
 // start game function - should be started by an event.
 // should trigger game music to be played
 // pacman and ghosts should appear, pacman & ghosts should begin moving a small interval after startGame has been activated.
+
+// // first we add the ghosts
+ghosts.forEach(function(ghost) {
+  cells[ghost.startingPosition].classList.add(ghost.className); // Use ghost.name
+  cells[ghost.startingPosition].dataset.ghostIndex = ghost.ghostIndex;
+});
+
+function moveGhost(ghost){
+  const ghostDirection = [-1, +1, + width, - width]
+  // redefined here so it is within scope:
+  // interval for movement
+  ghost.timer = setInterval(function () {
+    if (ghost && ghost.startingPosition !== undefined) {
+      const direction = ghostDirection[Math.floor(Math.random() * ghostDirection.length)]
+      const nextPosition = ghost.startingPosition + direction
+
+      if (nextPosition >= 0 && nextPosition < cells.length) {
+        if (!cells[nextPosition].classList.contains(ghost.className) && 
+            !cells[nextPosition].classList.contains('barrier')) {
+          // remove the ghost class from the current position
+          cells[ghost.startingPosition].classList.remove(ghost.className)
+          // update the ghost's position
+          ghost.startingPosition = nextPosition
+
+          // add the ghost class to the new position
+          cells[nextPosition].classList.add(ghost.className)
+
+          console.log(nextPosition)
+        }
+      }else {
+        direction = ghostDirection[Math.floor(Math.random() * ghostDirection.length)]
+    }}
+  }, ghost.speed) 
+}
+
+ghosts.forEach((ghost) => {
+  moveGhost(ghost)
+  // console.log(`Ghost: ${ghost.className}, Direction: ${direction}`)
+})
+
+
 
 
 // *CheckforCollision position
@@ -138,10 +198,17 @@ console.log(gridCreate())
 
 
 
+
+
 // * ghost movement. 
 // depending on complexity or details, movement could be done in loops, where each ghost follows set paths or maybe something more complex, more research needed.
 // reversed movement in the case pacman eats a special snack and can eat the ghosts - potentially reversal of movement so it appears they're moving away rather than towards?
 // the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
+
+  
+
+
+
 
 // ? ghostDissapear 
 // function to play to remove the ghost from the screen if pacman colides with it after eating the special skittle.
