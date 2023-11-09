@@ -11,10 +11,12 @@ body {
 h1 {
   color: #ffeb3b;
   text-align: center;
+  font-family: 'Agbalumo', san-serif;
+  font-size: 94px;
+  margin: auto;
 }
 
 .grid-wrapper {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -30,6 +32,12 @@ h1 {
   height: 500px;
   width: 500px;
   background: darkblue;
+}
+
+#score {
+  display: flex;
+  flex-direction: row;
+  
 }
 /* 
 #game > div {
@@ -47,11 +55,11 @@ h1 {
   background-repeat: no-repeat;
 }
 
-.pacmandown {
+ .pacmandown {
   background: url(../Images/pacman-down/1.png);
   background-size: cover;
   background-repeat: no-repeat;
-}
+} 
 
 .pacmandowntwo {
   background: url(../Images/pacman-down/2.png);
@@ -71,8 +79,8 @@ h1 {
   background-repeat: no-repeat;
 }
 
-.blue_ghost {
-  background: url(../Images/ghosts/blue_ghost.png);
+.pinky {
+  background: url(../Images/ghosts/pinky.png);
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -85,6 +93,12 @@ h1 {
 
 .inky {
   background: url(../Images/ghosts/inky.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.scared-ghost {
+  background: url(../Images/ghosts/blue_ghost.png);
   background-size: cover;
   background-repeat: no-repeat;
 }

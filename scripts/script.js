@@ -53,12 +53,13 @@ class Ghost{
     this.speed = speed
     this.startingPosition = ghostIndex
     this.timer = 0
+    this.scared = false
   }
 }
 
 ghosts = [
   new Ghost('blinky', 168, 250),
-  new Ghost('blue_ghost', 38, 350),
+  new Ghost('pinky', 38, 350),
   new Ghost('clyde', 152, 500),
   new Ghost('inky', 361, 400)
 
@@ -74,7 +75,7 @@ function gridCreate(){
   for (let i = 0; i < cellCount; i++){
     const cell = document.createElement('div')
     cell.classList.add('skittle')
-    cell.innerText = i 
+    // cell.innerText = i 
     cell.id = i
     // setting width and height:
     cell.style.width = `${100 / width}%`
@@ -120,7 +121,8 @@ function playerMove(event) {
   }
   if(cells[currentPos].classList.contains('power-food')) {
     cells[currentPos].classList.remove('power-food')
-    atePowerFood = true
+    setGhostsScaredState()
+    setTimeout(unScareGhosts, 10000)
     score += 100
     scoreDisplay.innerText = score
   }
@@ -131,24 +133,28 @@ function playerMove(event) {
     currentPos += width
   } else if (key === 'ArrowLeft' && !cells[currentPos - 1].classList.contains('barrier') && !cells[currentPos].classList.contains('skittles') && currentPos  % width !== 0){
     currentPos -= 1}
-    else if(key === 'ArrowLeft' && cells[currentPos - 1] === 159) {
+    else if(key === 'ArrowLeft' && cells[currentPos] === 160) {
       currentPos = 179
   } else if (key === 'ArrowRight' && !cells[currentPos + 1].classList.contains('barrier')){
     currentPos += 1
-  } else if (key === 'ArrowRight' && cells[currentPos + 1] === 180 && cells[currentPos + 1].classList.contains('barrier')){
+  } else if (key === 'ArrowRight' && cells[currentPos] === 179){
     currentPos = 160
+    console.log(`Current position: ${currentPos}`)
   }
   addpacMan()
 
 }
-
-
 gridCreate()
 
 // * startGame 
 // start game function - should be started by an event.
 // should trigger game music to be played
 // pacman and ghosts should appear, pacman & ghosts should begin moving a small interval after startGame has been activated.
+
+// * ghost movement. 
+// depending on complexity or details, movement could be done in loops, where each ghost follows set paths or maybe something more complex, more research needed.
+// reversed movement in the case pacman eats a special snack and can eat the ghosts - potentially reversal of movement so it appears they're moving away rather than towards?
+// the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
 
 // // first we add the ghosts
 ghosts.forEach(function(ghost) {
@@ -169,19 +175,51 @@ function moveGhost(ghost){
         if (!cells[nextPosition].classList.contains(ghost.className) && 
             !cells[nextPosition].classList.contains('barrier')) {
           // remove the ghost class from the current position
-          cells[ghost.startingPosition].classList.remove(ghost.className)
+          cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
           // update the ghost's position
           ghost.startingPosition = nextPosition
 
           // add the ghost class to the new position
-          cells[nextPosition].classList.add(ghost.className)
+          cells[ghost.startingPosition].classList.add(ghost.className)
 
           console.log(nextPosition)
         }
       }else {
         direction = ghostDirection[Math.floor(Math.random() * ghostDirection.length)]
-    }}
-  }, ghost.speed) 
+    }
+    if(ghost.scared) {
+      cells[ghost.startingPosition].classList.add('scared-ghost')
+      cells[ghost.startingPosition].classList.remove(ghost.className)
+    }
+
+    if(ghost.scared && cells[ghost.startingPosition].classList.contains('pacmandown')) {
+      cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
+      // score += 200 
+      cells[ghost.ghostIndex].classList.add(ghost.className)
+    }
+  }}, ghost.speed) 
+}
+
+function setGhostsScaredState() {
+  ghosts.forEach((ghost) => {
+    ghost.scared = true
+    atePowerFood = true
+    ghost.speed = ghost.speed * 4
+    // Add a "scared-ghost" class to change the appearance of the ghost
+    cells[ghost.startingPosition].classList.add('scared-ghost')
+    cells[ghost.startingPosition].classList.remove(ghost.name)
+  });
+}
+
+function unScareGhosts() {
+  ghosts.forEach((ghost) => {
+    ghost.scared = false
+    atePowerFood = false
+    const ghostCell = cells[ghost.startingPosition]
+    if (ghostCell.classList.contains('scared-ghost')) {
+      ghostCell.classList.remove('scared-ghost')
+    }
+  })
 }
 
 ghosts.forEach((ghost) => {
@@ -195,18 +233,26 @@ ghosts.forEach((ghost) => {
 // *CheckforCollision position
 // setInterval function that will check the position of pacman in relation to the ghost, if in the same cell player will lose a life and reset the games starting position.
 // In situations where pacman has eaten the special skittle, check collision should result in ghost being eaten.
+function checkForCollision() {
+  // Iterate through the ghosts and check if Pacman collides with any of them
+  ghosts.forEach((ghost) => {
+    if (currentPos === ghost.startingPosition) {
+      if (atePowerFood) {
+        // Pacman ate a special skittle, so "eat" the ghost
+        cells[ghost.startingPosition].classList.remove(ghost.className)
+        ghost.startingPosition = ghost.ghostIndex // Reset ghost position
+      } else {
+        // Pacman didn't eat a special skittle, reduce a life and reset positions
+        lives--
+        livesRemaining.innerText = '♥ '.repeat(lives)
+        cells[currentPos].classList.remove('pacmandown')
+        currentPos = startPos
+      }
+    }
+  })
+}
 
-
-
-
-
-// * ghost movement. 
-// depending on complexity or details, movement could be done in loops, where each ghost follows set paths or maybe something more complex, more research needed.
-// reversed movement in the case pacman eats a special snack and can eat the ghosts - potentially reversal of movement so it appears they're moving away rather than towards?
-// the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
-
-  
-
+setInterval(checkForCollision, 100)
 
 
 
@@ -219,6 +265,13 @@ ghosts.forEach((ghost) => {
 // * winGame & loseGame function
 // should stop all actions on the board, congradulate player and save their score into a database and bring up a start again button.
 // signal to player of their failure, offer them the chance to play again.
+function checkForWin() {
+  if (score === 584){
+    ghosts.forEach(ghost => clearInterval(ghost.timer))
+    document.removeEventListener('keydown', playerMove)
+    console.log('You won!')
+  }
+}
 
 
 // ! Events
