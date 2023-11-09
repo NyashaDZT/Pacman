@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>PACMAN by Nyasha Dzvoti</title>
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,19 +11,20 @@
   <script defer src="scripts/script.js"></script>
 </head>
 <body>
+  <audio id="audio"></audio>
   <section id="container">
     <h1 id="header">PACMAN</h1>
+    <section id="score">
+      <button id="start-button">START GAME</button>
+      <div>Score: <span id="current-score"></span></div>
+      <div>Lives: <span id="lives">♥ ♥ ♥</span></div>
+      <div><span id="high-score"></span></div>
+    </section>
     <!-- game grid -->
     <div class="grid-wrapper">
       <div id="game"></div>
     </div>
     <!-- visual info and start button -->
-    <section id="score">
-      <button id="start-button">START PACMAN</button>
-      <div>Score: <span id="current-score"></span></div>
-      <div>Lives <span id="lives">♥ ♥ ♥</span></div>
-      <div><span id="high-score"></span></div>
-    </section>
   </section>
 </body>
 </html>

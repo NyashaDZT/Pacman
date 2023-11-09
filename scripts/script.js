@@ -6,11 +6,20 @@ const livesRemaining = document.getElementById('lives')
 // scoreDisplay targetetted with a span - to show many points the player has accrued at any point during the game.
 const scoreDisplay = document.getElementById('current-score')
 // ? variable for speed (ghost & pacman) or universal speed?
- // gameOn? = boolean true or false to show whether the game is still playing or not. 
- let score = 0
- let lives = 3
- let skittles = 0
- let atePowerFood = false
+ // gameWin = boolean true or false to show whether the game is still playing or not. 
+let gameWin = false
+
+const wrapper = document.getElementsByClassName('grid-wrapper')
+
+let score = 0
+let lives = 3
+let skittles = 0
+let atePowerFood = false
+
+
+//  for sounds
+const audio = document.getElementsByTagName('audio')
+const player = new Audio()
 
 
 
@@ -115,11 +124,19 @@ function playerMove(event) {
   removePacman()
 
   if (cells[currentPos].classList.contains('skittle')) {
+    player.src = "./audio/pacman_chomp.wav"
+    player.currentTime = 0
+    player.play()
     cells[currentPos].classList.remove('skittle')
     score++
     scoreDisplay.innerText = score
+    checkForWin()
+    
   }
   if(cells[currentPos].classList.contains('power-food')) {
+    player.src = "./audio/pacman_eatfruit.wav"
+    player.currentTime = 0
+    player.play()
     cells[currentPos].classList.remove('power-food')
     setGhostsScaredState()
     setTimeout(unScareGhosts, 10000)
@@ -133,13 +150,12 @@ function playerMove(event) {
     currentPos += width
   } else if (key === 'ArrowLeft' && !cells[currentPos - 1].classList.contains('barrier') && !cells[currentPos].classList.contains('skittles') && currentPos  % width !== 0){
     currentPos -= 1}
-    else if(key === 'ArrowLeft' && cells[currentPos] === 160) {
+    else if(key === 'ArrowLeft' && currentPos === 160) {
       currentPos = 179
   } else if (key === 'ArrowRight' && !cells[currentPos + 1].classList.contains('barrier')){
     currentPos += 1
-  } else if (key === 'ArrowRight' && cells[currentPos] === 179){
+  } else if (key === 'ArrowRight' && currentPos === 179){
     currentPos = 160
-    console.log(`Current position: ${currentPos}`)
   }
   addpacMan()
 
@@ -150,6 +166,18 @@ gridCreate()
 // start game function - should be started by an event.
 // should trigger game music to be played
 // pacman and ghosts should appear, pacman & ghosts should begin moving a small interval after startGame has been activated.
+function startGame(){
+  player.src = "./audio/pacman_beginning.wav"
+  player.currentTime = 0
+  player.play()
+  startButton.innerText = 'RETRY'
+
+  document.addEventListener('keydown', playerMove)
+  ghosts.forEach((ghost) => {
+    moveGhost(ghost)
+  })
+
+}
 
 // * ghost movement. 
 // depending on complexity or details, movement could be done in loops, where each ghost follows set paths or maybe something more complex, more research needed.
@@ -157,10 +185,10 @@ gridCreate()
 // the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
 
 // // first we add the ghosts
-ghosts.forEach(function(ghost) {
-  cells[ghost.startingPosition].classList.add(ghost.className); // Use ghost.name
-  cells[ghost.startingPosition].dataset.ghostIndex = ghost.ghostIndex;
-});
+// ghosts.forEach(function(ghost) {
+//   cells[ghost.startingPosition].classList.add(ghost.className); // Use ghost.name
+//   cells[ghost.startingPosition].dataset.ghostIndex = ghost.ghostIndex;
+// });
 
 function moveGhost(ghost){
   const ghostDirection = [-1, +1, + width, - width]
@@ -195,6 +223,9 @@ function moveGhost(ghost){
     if(ghost.scared && cells[ghost.startingPosition].classList.contains('pacmandown')) {
       cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
       // score += 200 
+      player.src = "./audio/pacman_eatghost.wav"
+      player.currentTime = 0
+      player.play()
       cells[ghost.ghostIndex].classList.add(ghost.className)
     }
   }}, ghost.speed) 
@@ -222,10 +253,7 @@ function unScareGhosts() {
   })
 }
 
-ghosts.forEach((ghost) => {
-  moveGhost(ghost)
-  // console.log(`Ghost: ${ghost.className}, Direction: ${direction}`)
-})
+
 
 
 
@@ -259,23 +287,36 @@ setInterval(checkForCollision, 100)
 // ? ghostDissapear 
 // function to play to remove the ghost from the screen if pacman colides with it after eating the special skittle.
 
-// * catchGhost - will change game conditions so pacman is able to 
-// use of a setTimeout will be the bases of this fucntion, at the end of the time out we will restart normal ghost mechanics
-
 // * winGame & loseGame function
 // should stop all actions on the board, congradulate player and save their score into a database and bring up a start again button.
-// signal to player of their failure, offer them the chance to play again.
+// signal to player of their win or loss with a message, offer them the chance to play again.
 function checkForWin() {
-  if (score === 584){
+  if (score === 584) {
     ghosts.forEach(ghost => clearInterval(ghost.timer))
     document.removeEventListener('keydown', playerMove)
-    console.log('You won!')
+
+    // Call the showYouWonMessage function when the game is won
+    showYouWonMessage()
   }
 }
+
+function showYouWonMessage() {
+  const div = document.createElement('div')
+  div.classList.add('game-won')
+  div.innerHTML = 'YOU WON!!'
+  grid.appendChild(div)
+  console.log("Check for win called")
+
+  // Use setTimeout to remove the message after a delay (e.g., 2 seconds)
+  setTimeout(() => {
+    div.remove()
+  }, 20000); // 2000 milliseconds = 2 seconds
+}
+
 
 
 // ! Events
 // event listener for keydown - movements
 // event listener for click  - start the game, play music, pause and potentially restart.
 
-document.addEventListener('keydown', playerMove)
+startButton.addEventListener('click', startGame)

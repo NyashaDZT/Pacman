@@ -1,17 +1,23 @@
 /* All Images taken from pixelholic. Name: Pacman Game Art */
+@font-face {
+  font-family: PAC-FONT;
+  src: url(../PAC-FONT.TTF)
+}
+
 
 body {
-  background-color: green;
+  background-color: rgb(4, 4, 60);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: PAC-FONT, san-serif;
 }
 
 h1 {
   color: #ffeb3b;
   text-align: center;
-  font-family: 'Agbalumo', san-serif;
+  font-family: PAC-FONT, san-serif;
   font-size: 94px;
   margin: auto;
 }
@@ -21,8 +27,10 @@ h1 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  align-items: center;
   height: 600px;
   width: 600px;
+  font-size: 1rem;
 }
 
 #game {
@@ -31,14 +39,37 @@ h1 {
   background: white;
   height: 500px;
   width: 500px;
-  background: darkblue;
+  background: rgb(4, 4, 60);
+}
+
+span{
+color:white
+}
+
+#start-button {
+  z-index: 1000;
+  cursor: pointer;
+  border: 5%;
 }
 
 #score {
   display: flex;
   flex-direction: row;
-  
+  justify-content: space-evenly;
+  margin-top: 30px;
+  color: white;
+
 }
+
+#current-score {
+  font-family: 'Agbalumo', sans-serif;
+}
+
+p {
+  font-size: 20px;
+}
+
+
 /* 
 #game > div {
   border: 1px solid black;
@@ -46,7 +77,9 @@ h1 {
 */
 
 .barrier {
-  background-color: #46270B;
+  background: url(../Images/moreImages/chompermazetiles\ copy.png);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
   .skittle {
@@ -104,9 +137,17 @@ h1 {
 }
 
 .power-food {
-  background: url(../Images/other/strawberry.png);
-  background-size: contain;
+  background: url(../Images/moreImages/shiny.png);
+  background-size: cover;
   background-repeat: no-repeat;
-  animation: blink 1s infinite;
+}
+
+.game-won {
+  position: absolute;
+  margin: auto;
+  align-items: center;
+  background: transparent;
+  font-size: 40px;
+  color: yellow;
 }
 
