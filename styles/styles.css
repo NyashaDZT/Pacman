@@ -52,6 +52,10 @@ color:white
   border: 5%;
 }
 
+#start-button:hover {
+  cursor: pointer;
+}
+
 #score {
   display: flex;
   flex-direction: row;
@@ -65,8 +69,9 @@ color:white
   font-family: 'Agbalumo', sans-serif;
 }
 
-p {
-  font-size: 20px;
+.highscore,  #high-score {
+  color: white;
+  margin-top: 20px;
 }
 
 

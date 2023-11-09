@@ -6,22 +6,17 @@ const livesRemaining = document.getElementById('lives')
 // scoreDisplay targetetted with a span - to show many points the player has accrued at any point during the game.
 const scoreDisplay = document.getElementById('current-score')
 // ? variable for speed (ghost & pacman) or universal speed?
- // gameWin = boolean true or false to show whether the game is still playing or not. 
-let gameWin = false
-
-const wrapper = document.getElementsByClassName('grid-wrapper')
+ // gameStatus = boolean true or false to show whether the game is still playing or not. 
+let gameStatus = false
 
 let score = 0
 let lives = 3
 let skittles = 0
 let atePowerFood = false
 
-
 //  for sounds
 const audio = document.getElementsByTagName('audio')
 const player = new Audio()
-
-
 
 
 /* An element to set up the grid - this is mostly likely going to be done with the use of a for element.
@@ -73,10 +68,6 @@ ghosts = [
   new Ghost('inky', 361, 400)
 
 ]
-
-  // cell arrays
-
-
 
 // ! Variables
 
@@ -171,6 +162,7 @@ function startGame(){
   player.currentTime = 0
   player.play()
   startButton.innerText = 'RETRY'
+  highestScore()
 
   document.addEventListener('keydown', playerMove)
   ghosts.forEach((ghost) => {
@@ -202,15 +194,13 @@ function moveGhost(ghost){
       if (nextPosition >= 0 && nextPosition < cells.length) {
         if (!cells[nextPosition].classList.contains(ghost.className) && 
             !cells[nextPosition].classList.contains('barrier')) {
-          // remove the ghost class from the current position
-          cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
-          // update the ghost's position
-          ghost.startingPosition = nextPosition
+            cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
+            // update the ghost's position
+            ghost.startingPosition = nextPosition
 
-          // add the ghost class to the new position
-          cells[ghost.startingPosition].classList.add(ghost.className)
+            // add the ghost class to the new position
+            cells[ghost.startingPosition].classList.add(ghost.className)
 
-          console.log(nextPosition)
         }
       }else {
         direction = ghostDirection[Math.floor(Math.random() * ghostDirection.length)]
@@ -222,7 +212,6 @@ function moveGhost(ghost){
 
     if(ghost.scared && cells[ghost.startingPosition].classList.contains('pacmandown')) {
       cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
-      // score += 200 
       player.src = "./audio/pacman_eatghost.wav"
       player.currentTime = 0
       player.play()
@@ -275,6 +264,8 @@ function checkForCollision() {
         livesRemaining.innerText = '♥ '.repeat(lives)
         cells[currentPos].classList.remove('pacmandown')
         currentPos = startPos
+        checkForLoss()
+
       }
     }
   })
@@ -290,30 +281,55 @@ setInterval(checkForCollision, 100)
 // * winGame & loseGame function
 // should stop all actions on the board, congradulate player and save their score into a database and bring up a start again button.
 // signal to player of their win or loss with a message, offer them the chance to play again.
+
+// refactored to make more sense
 function checkForWin() {
   if (score === 584) {
-    ghosts.forEach(ghost => clearInterval(ghost.timer))
-    document.removeEventListener('keydown', playerMove)
-
-    // Call the showYouWonMessage function when the game is won
-    showYouWonMessage()
+    handleGameEnd(true)
+    saveHighestScore()
   }
 }
 
-function showYouWonMessage() {
-  const div = document.createElement('div')
-  div.classList.add('game-won')
-  div.innerHTML = 'YOU WON!!'
-  grid.appendChild(div)
-  console.log("Check for win called")
-
-  // Use setTimeout to remove the message after a delay (e.g., 2 seconds)
-  setTimeout(() => {
-    div.remove()
-  }, 20000); // 2000 milliseconds = 2 seconds
+function checkForLoss() {
+  if (lives <= 0) {
+    player.src = "./audio/pacman_death.wav"
+    player.currentTime = 0
+    player.play()
+    handleGameEnd(false)
+    saveHighestScore()
+  }
 }
 
+function handleGameEnd(isWin) {
+  gameStatus = isWin;
+  ghosts.forEach(ghost => clearInterval(ghost.timer))
+  document.removeEventListener('keydown', playerMove)
 
+  showGameStatusMessage(isWin)
+}
+
+function showGameStatusMessage(isWin) {
+  const div = document.createElement('div')
+  div.classList.add('game-won')
+  div.innerHTML = isWin ? 'YOU WON' : 'GAME OVER'
+  div.style.color = isWin ? 'yellow' : 'red'
+  grid.appendChild(div)
+  setTimeout(() => {
+    div.remove()
+  }, 2000)
+}
+
+function saveHighestScore() {
+  if (score > parseInt(localStorage.getItem('highScore')) || !localStorage.getItem('highScore')) {
+    localStorage.setItem('highScore', score)
+  }
+}
+
+function highestScore() {
+  const highScore = document.getElementById('high-score')
+  const highestScore = localStorage.getItem('highestScore') || 0
+  highScore.innerText = highScore
+}
 
 // ! Events
 // event listener for keydown - movements
