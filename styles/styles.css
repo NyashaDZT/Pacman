@@ -109,7 +109,7 @@ color:white
   background: url(../Images/pacman-down/3.png);
   background-size: cover;
   background-repeat: no-repeat;
-
+}
   /* .pacman-animation {
     animation: eatSkittles 0.5s steps(3) infinite; 
   }

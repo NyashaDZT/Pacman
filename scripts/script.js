@@ -166,10 +166,11 @@ function startGame(){
   removePacman()
   currentPos = startPos
   
-  ghosts.forEach((ghost) => {
-    cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
-  })
-  
+  ghosts.forEach(function(ghost) {
+    cells[ghost.startingPosition].classList.remove(ghost.className);
+    cells[ghost.startingPosition].classList.add(ghost.className); 
+    cells[ghost.startingPosition].dataset.ghostIndex = ghost.ghostIndex;
+  });
   
   clearGameStatusMessage()
   
@@ -195,10 +196,6 @@ function startGame(){
 // the movement for each ghost will have to be different and each dino has slightly different characteristics that should be taken into account.
 
 // // first we add the ghosts
-// ghosts.forEach(function(ghost) {
-//   cells[ghost.startingPosition].classList.add(ghost.className); // Use ghost.name
-//   cells[ghost.startingPosition].dataset.ghostIndex = ghost.ghostIndex;
-// });
 
 function moveGhost(ghost){
   const ghostDirection = [-1, +1, + width, - width]
