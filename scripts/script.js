@@ -158,13 +158,31 @@ gridCreate()
 // should trigger game music to be played
 // pacman and ghosts should appear, pacman & ghosts should begin moving a small interval after startGame has been activated.
 function startGame(){
+  score = 0
+  scoreDisplay.innerText = ""
+  lives = 3
+  livesRemaining.innertext = "♥ ♥ ♥"
+  atePowerFood = false
+  removePacman()
+  currentPos = startPos
+  
+  ghosts.forEach((ghost) => {
+    cells[ghost.startingPosition].classList.remove(ghost.className, 'scared-ghost')
+  })
+  
+  
+  clearGameStatusMessage()
+  
   player.src = "./audio/pacman_beginning.wav"
   player.currentTime = 0
   player.play()
+  
   startButton.innerText = 'RETRY'
   highestScore()
 
   document.addEventListener('keydown', playerMove)
+  
+  
   ghosts.forEach((ghost) => {
     moveGhost(ghost)
   })
@@ -329,6 +347,13 @@ function highestScore() {
   const highScore = document.getElementById('high-score')
   const highestScore = localStorage.getItem('highestScore') || 0
   highScore.innerText = highScore
+}
+
+function clearGameStatusMessage() {
+  const gameStatusMessage = document.querySelector('game-won')
+  if (gameStatusMessage) {
+    gameStatusMessage.remove()
+  }
 }
 
 // ! Events

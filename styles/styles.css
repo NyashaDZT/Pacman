@@ -109,7 +109,18 @@ color:white
   background: url(../Images/pacman-down/3.png);
   background-size: cover;
   background-repeat: no-repeat;
+
+  /* .pacman-animation {
+    animation: eatSkittles 0.5s steps(3) infinite; 
+  }
 }
+Animation??? not enough time.
+@keyframes eatSkittles {
+  0% { background-image: url('../Images/pacman-down/1.png'); }
+  33.33% { background-image: url('../Images/pacman-down/2.png'); }
+  66.66% { background-image: url('../Images/pacman-down/3.png'); }
+  100% { background-image: url('../Images/pacman-down/1.png'); }
+} */
 
 .blinky {
   background: url(../Images/ghosts/blinky.png);
