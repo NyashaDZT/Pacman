@@ -11,7 +11,7 @@ let gameStatus = false
 
 let score = 0
 let lives = 3
-let skittles = 0
+// let skittles = 0 
 let atePowerFood = false
 
 //  for sounds
@@ -61,7 +61,7 @@ class Ghost{
   }
 }
 
-ghosts = [
+let ghosts = [
   new Ghost('blinky', 168, 250),
   new Ghost('pinky', 38, 350),
   new Ghost('clyde', 152, 500),
@@ -271,6 +271,7 @@ function checkForCollision() {
     if (currentPos === ghost.startingPosition) {
       if (atePowerFood) {
         // Pacman ate a special skittle, so "eat" the ghost
+        cells[ghost.startingPosition].classList.remove('scared-ghost')
         cells[ghost.startingPosition].classList.remove(ghost.className)
         ghost.startingPosition = ghost.ghostIndex // Reset ghost position
       } else {
@@ -343,7 +344,7 @@ function saveHighestScore() {
 function highestScore() {
   const highScore = document.getElementById('high-score')
   const highestScore = localStorage.getItem('highestScore') || 0
-  highScore.innerText = highScore
+  highScore.innerText = parseInt(highScore)
 }
 
 function clearGameStatusMessage() {
