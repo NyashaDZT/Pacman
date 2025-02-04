@@ -37,7 +37,9 @@ Stick with KISS (Keep It Simple Stupid) and DRY (Don't Repeat Yourself) principl
 Use Javascript for DOM manipulation
 Deploy your game online, where the rest of the world can access it
 Use semantic markup for HTML and CSS (adhere to best practices)
+
 Requirements
+
 Players should be able to clear at least one board.
 Player’s score should be displayed at the end of the game.
 
